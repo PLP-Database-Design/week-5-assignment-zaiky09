@@ -2,8 +2,9 @@ const express = require('express')
 const app = express()
 
 // Load .env file
-require('dotenv').config(); 
 const mysql = require('mysql2');
+const dotenv = require('dotenv');
+dotenv.config();
 
 // Create a connection to the MySQL database
 const db = mysql.createConnection({
@@ -19,6 +20,10 @@ db.connect((err) => {
     console.log("Connected to MYSQL as id: ", db.threadId);
 });
 
+
+app.set('view engine', 'ejs' );
+app.set('views', __dirname + '/views');
+
 // Question 1: Retrieve all patients
 app.get('/patients', (req, res) => {
     const query = 'SELECT patient_id, first_name, last_name, date_of_birth FROM patients';
@@ -26,7 +31,7 @@ app.get('/patients', (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.json(results);
+      res.render('patients', { patients: results });
     });
   });
 
@@ -37,7 +42,7 @@ app.get('/providers', (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.json(results);
+      res.render('providers', { providers: results });
     });
   });
 
